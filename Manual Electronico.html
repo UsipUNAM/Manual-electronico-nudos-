@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Nudos Quirúrgicos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para el cuerpo */
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f0f4f8;
+            background-image: linear-gradient(to bottom right, #eef2ff, #f0f4f8);
+            overflow-x: hidden;
+        }
+        /* Contenedor principal del libro */
+        .book-container {
+            width: 100%;
+            max-width: 1800px; 
+            margin: auto;
+            padding: 2rem 1rem; /* Padding para móvil */
+        }
+        /* Estilo para las dobles páginas (spreads) */
+        .spread {
+            display: none; /* Oculto por defecto */
+        }
+        .spread.active {
+            display: flex;
+            flex-direction: column; /* Apilado en móvil */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Animación de aparición */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilo general de las páginas */
+        .page {
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 3rem 2.5rem;
+            font-family: 'Merriweather', serif;
+            color: #374151;
+            width: 100%;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        /* Estilos específicos de la portada */
+        .cover-page {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Encabezados de página */
+        .page-header {
+            color: #1e3a8a;
+            border-bottom: 3px solid #93c5fd;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2rem;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        /* Número de página */
+        .page-number {
+            position: absolute;
+            bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: #b0b0b0;
+            font-family: 'Lato', sans-serif;
+            right: 2.5rem; /* Posición por defecto para móvil */
+        }
+        
+        /* Logos institucionales */
+        .page-logos {
+            position: absolute;
+            top: 1.5rem;
+            right: 2.5rem;
+            display: flex;
+            gap: 0.75rem;
+            opacity: 0.25;
+            align-items: center;
+        }
+        .page-logos img {
+            height: 32px;
+            object-fit: contain;
+        }
+        
+        /* Pie de foto para imágenes */
+        .image-caption {
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+            color: #ffffff99;
+            margin-top: 1.5rem;
+            max-width: 80%;
+            text-align: center;
+        }
+        
+        /* Estilos para pantallas grandes (desktop) */
+        @media (min-width: 1024px) {
+            .book-container {
+                padding: 2rem 0;
+            }
+            .spread.active {
+                flex-direction: row; /* Lado a lado en desktop */
+                align-items: stretch;
+            }
+            .page {
+                flex-basis: 50%;
+                max-width: 50%;
+                margin-bottom: 0;
+                padding: 5rem 4rem 3rem;
+                overflow-y: auto; /* Scroll individual por página si el contenido es largo */
+            }
+            /* Sombra interior para efecto de libro */
+            .page-left {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                box-shadow: inset -8px 0 15px -8px rgba(0,0,0,0.15);
+            }
+            .page-right {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                box-shadow: inset 8px 0 15px -8px rgba(0,0,0,0.15);
+            }
+            .page-number.left { left: 4rem; right: auto;}
+            .page-number.right { right: 4rem; left: auto;}
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .video-container iframe { width: 100%; height: 100%; }
+
+        h1 { font-weight: 700; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.6rem; font-weight: 700; color: #1e40af; font-family: 'Lato', sans-serif; margin-bottom: 1rem; }
+        h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; color: #1d4ed8; font-family: 'Lato', sans-serif; margin-top: 1.5rem; }
+        p, li { 
+            font-size: 1rem;
+            line-height: 1.9;
+            text-align: justify;
+            margin-bottom: 1rem;
+        }
+        ul { list-style-type: disc; padding-left: 2rem; }
+        ol { list-style-type: decimal; padding-left: 2rem; }
+        
+        /* Estilos para la lista de referencias */
+        .references-list { 
+            list-style-type: none; 
+            padding-left: 0; 
+        }
+        .references-list li {
+            font-size: 9px;       /* Tamaño de fuente más reducido */
+            line-height: 1.4;     /* Interlineado más ajustado */
+            margin-bottom: 0.6rem; /* Margen inferior reducido */
+        }
+        
+        .index-list { list-style: none; padding: 0; width: 100%; }
+        .index-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        .index-list .dots {
+            flex-grow: 1;
+            border-bottom: 1px dotted #ccc;
+            margin: 0 0.5rem;
+        }
+        .index-list .sub-item { padding-left: 2rem; font-size: 0.9rem; }
+        .index-list .main-item {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            color: #1e40af;
+            margin-top: 1.5rem;
+        }
+        
+        /* Contenedor de botones de navegación */
+        .nav-button-container {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+        .nav-button {
+            background-color: rgba(30, 58, 138, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-button:hover:not(:disabled) {
+            background-color: #2563eb;
+            transform: translateY(-3px);
+        }
+        .nav-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .text-tiny {
+            font-size: 0.6rem; /* Tamaño de letra más pequeño para autores */
+            line-height: 0.9rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="book-container">
+        <!-- Spread 0: Portada -->
+        <div id="spread-0" class="spread active">
+            <div class="page page-left cover-page p-8">
+                <img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508630/Gemini_Generated_Image_9mgb219mgb219mgb_dazbxj.png" alt="Ilustración de nudos quirúrgicos" class="max-w-full max-h-[70%] object-contain rounded-lg shadow-2xl">
+                <p class="image-caption">"Cada nudo cuenta. La técnica y el cuidado en la sutura son fundamentales para un resultado exitoso."</p>
+            </div>
+            <div class="page page-right cover-page">
+                <div class="flex-grow flex flex-col justify-center items-center">
+                    <h1 class="text-4xl md:text-5xl font-bold">Manual de Nudos Quirúrgicos</h1>
+                    <p class="text-lg md:text-xl mt-4 text-blue-200">Guía Esencial para Residentes de Cirugía General</p>
+                    
+                    <!-- Sección de Autores y Revisión -->
+                    <div class="my-6 text-center">
+                        <h3 class="text-base font-bold text-blue-100 font-lato">Autores</h3>
+                        <p class="text-tiny text-blue-200 mt-2">Dr. Jesús Tapia Jurado - Jefe de la unidad de simulación de posgrados (USIP) UNAM.</p>
+                        <p class="text-tiny text-blue-200">Dr. Alfonso Díaz Echevarría - Coordinador USIP UNAM.</p>
+                        <p class="text-tiny text-blue-200">Dr. David Guillermo Hernández E. - Coordinador USIP UNAM.</p>
+                    </div>
+
+                    <div class="border-t-4 border-blue-300 w-1/2"></div>
+                    <p class="text-xs text-blue-300 mt-3">Fecha de última revisión: 10/06/2025</p>
+                </div>
+                <div class="w-full pb-4 mt-auto">
+                    <div class="flex justify-around items-center">
+                        <img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png" alt="Logo UNAM" class="h-20 md:h-24 object-contain" onerror="this.style.display='none'">
+                        <img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png" alt="Logo Facultad de Medicina" class="h-20 md:h-24 object-contain" onerror="this.style.display='none'">
+                        <img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png" alt="Logo CESIQ" class="h-20 md:h-24 object-contain" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Spread 1: Índice -->
+        <div id="spread-1" class="spread">
+             <div class="page page-left index-page">
+                 <h2 class="page-header">Índice</h2>
+                 <ul class="index-list">
+                     <li class="main-item"><span>Principios Fundamentales</span></li>
+                     <li class="sub-item"><span>1.1. Definición y Componentes</span><span class="dots"></span><span>1</span></li>
+                     <li class="sub-item"><span>1.2. Principios de Seguridad y Mecánica</span><span class="dots"></span><span>4</span></li>
+                     
+                     <li class="main-item"><span>El Nudo Cuadrado</span></li>
+                     <li class="sub-item"><span>2.1. Descripción General</span><span class="dots"></span><span>7</span></li>
+                     <li class="sub-item"><span>2.2. Técnica a Dos Manos</span><span class="dots"></span><span>8</span></li>
+                     <li class="sub-item"><span>2.3. Técnica a Una Mano</span><span class="dots"></span><span>9</span></li>
+                     <li class="sub-item"><span>2.4. Aplicaciones y Consideraciones</span><span class="dots"></span><span>10</span></li>
+
+                     <li class="main-item"><span>El Nudo de Cirujano</span></li>
+                     <li class="sub-item"><span>3.1. Descripción y Principio</span><span class="dots"></span><span>11</span></li>
+                     <li class="sub-item"><span>3.2. Indicaciones y Consideraciones</span><span class="dots"></span><span>12</span></li>
+                 </ul>
+             </div>
+             <div class="page page-right index-page">
+                 <h2 class="page-header">Índice</h2>
+                 <ul class="index-list">
+                      <li class="main-item"><span>Anudado en Profundidad</span></li>
+                      <li class="sub-item"><span>4.1. Principios y Técnicas</span><span class="dots"></span><span>13</span></li>
+
+                      <li class="main-item"><span>Análisis Comparativo</span></li>
+                      <li class="sub-item"><span>5.1. Nudo Cuadrado vs. Nudo de Cirujano</span><span class="dots"></span><span>14</span></li>
+
+                      <li class="main-item"><span>Mejores Prácticas</span></li>
+                      <li class="sub-item"><span>6.1. Selección del Material</span><span class="dots"></span><span>15</span></li>
+                      <li class="sub-item"><span>6.2. Minimizar Trauma Tisular</span><span class="dots"></span><span>17</span></li>
+                      <li class="sub-item"><span>6.3. Prevención y Simulación</span><span class="dots"></span><span>18</span></li>
+
+                      <li class="main-item"><span>Conclusión</span><span class="dots"></span><span>19</span></li>
+                      <li class="main-item"><span>Referencias Bibliográficas</span><span class="dots"></span><span>20</span></li>
+                 </ul>
+             </div>
+        </div>
+
+        <!-- Spread 2: Pages 1-2 -->
+        <div id="spread-2" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 1: Principios Fundamentales</h2>
+                <h3>1.1. Definición y Componentes Esenciales</h3>
+                <p>El anudado quirúrgico es una maniobra elemental en cirugía que consiste en el entrelazado seguro de los extremos de un hilo de sutura para aproximar tejidos o ligar estructuras. Esta técnica es crucial tanto para la <strong>sutura</strong>, que es la unión de los bordes de una herida para facilitar su cicatrización, como para la <strong>ligadura</strong>, el cierre de una estructura anatómica como un vaso sanguíneo.</p>
+                <p>Para comprender la técnica, es vital definir sus componentes básicos:</p>
+                <ul>
+                    <li><strong>Semi Nudo o Lazada:</strong> Es el entrelazado simple de los dos cabos de un hilo de sutura. Es la unidad fundamental de cualquier nudo.</li>
+                    <li><strong>Nudo Completo:</strong> Se compone de una sucesión de seminudos o lazadas realizados para asegurar la sutura.</li>
+                </ul>
+                <div class="page-number left">1</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <ul>
+                    <li><strong>Nudo Plano:</strong> Es un nudo en el que los cabos de cada seminudo se asientan correctamente, uno paralelo al otro. Esto distribuye la tensión de manera uniforme y resiste mejor las fuerzas de tracción. Se logra realizando cada seminudo en sentido opuesto al anterior.</li>
+                </ul>
+                <p>La fiabilidad de los nudos quirúrgicos desempeña un papel crítico en los resultados postoperatorios. Es fundamental reconocer que los nudos representan, inherentemente, el punto estructural más débil en cualquier línea de sutura. Una lazada mal ejecutada, un nudo con tensión incorrecta o un número insuficiente de lazadas puede comprometer de forma severa el resultado quirúrgico. Las consecuencias de un fallo en el nudo van más allá del simple desenredo; pueden ocasionar complicaciones graves como <strong>dehiscencia de heridas</strong> (apertura de los planos suturados), <strong>evisceración</strong> o <strong>eventración</strong>, lo que se traduce en un aumento de la morbilidad del paciente, días de estancia intrahospitalaria y costos para el sistema de salud.</p>
+                <div class="page-number right">2</div>
+            </div>
+        </div>
+        
+        <!-- Spread 3: Pages 3-4 -->
+        <div id="spread-3" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">1.2. Principios de Seguridad y Mecánica</h2>
+                <p>Un nudo quirúrgico ideal debe ser eficaz y seguro. Sus características ideales incluyen:</p>
+                <ul>
+                    <li><strong>Ajuste preciso:</strong> Debe ceñirse perfectamente al tejido, aplicando una tensión controlada sin dejar espacios muertos.</li>
+                    <li><strong>Firmeza:</strong> Debe ser sólido y resistente a las fuerzas de tensión sin deslizarse ni deshacerse.</li>
+                    <li><strong>Eficiencia:</strong> Su ejecución debe ser fácil y rápida.</li>
+                    <li><strong>Bajo perfil:</strong> Debe ser lo menos voluminoso posible para minimizar la reacción a cuerpo extraño y el riesgo de infección.</li>
+                </ul>
+                <div class="page-number left">3</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                 <p>Estas características se logran mediante la comprensión y aplicación de los siguientes principios mecánicos:</p>
+                 <ul>
+                    <li><strong>Tensión:</strong> La fuerza aplicada a los cabos del hilo debe ser homogénea y adecuada para aproximar los tejidos, no para estrangularlos. Una tensión insuficiente resulta en un nudo flojo propenso al deslizamiento, mientras que una tensión excesiva puede dañar la sutura o causar isquemia y necrosis en los tejidos.</li>
+                    <li><strong>Fricción:</strong> Es la fuerza que se opone al deslizamiento entre las hebras del nudo, contribuyendo directamente a su seguridad. Ciertas técnicas de anudado están diseñadas para aumentar la fricción y, con ello, la estabilidad del nudo.</li>
+                 </ul>
+                <div class="page-number right">4</div>
+            </div>
+        </div>
+        
+        <!-- Spread 4: Pages 5-6 -->
+        <div id="spread-4" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <ul>
+                    <li><strong>Configuración del Nudo:</strong> La seguridad varía considerablemente en función del material, su calibre, la configuración específica (ej. nudo cuadrado vs. nudo de cirujano), el número de lazadas y la longitud de los cabos. Los dos mecanismos de fallo de un nudo son el deslizamiento o la ruptura del material.</li>
+                    <li><strong>Memoria de la Sutura:</strong> Se refiere a la tendencia de un material, especialmente los monofilamentos sintéticos, a recuperar su forma original. Una alta memoria es un desafío para la seguridad del nudo y generalmente requiere la realización de más lazadas o el uso de nudos de mayor fricción.</li>
+                </ul>
+                <div class="page-number left">5</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 2: El Nudo Cuadrado</h2>
+                <p>Aquí nos enfocaremos en el nudo más fundamental de la cirugía: el nudo cuadrado. Aprenderás su correcta ejecución, sus usos más comunes y los errores que se deben evitar.</p>
+                <h3>2.1. Descripción General y Prevalencia</h3>
+                <p>El nudo cuadrado, también conocido como nudo llano, es el nudo quirúrgico más utilizado. Su diseño se basa en la confección de dos seminudos donde el segundo se ejecuta en sentido opuesto al primero, asegurando que el nudo se asiente de forma plana. Esta configuración optimiza la distribución de la tensión y minimiza el riesgo de deslizamiento, por lo que es reconocido como popular y fiable.</p>
+                <div class="page-number right">6</div>
+            </div>
+        </div>
+
+        <!-- Spread 5: Pages 7-8 -->
+        <div id="spread-5" class="spread">
+             <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <p>Si dos seminudos sucesivos se realizan en la misma dirección, se forma un <strong>"nudo de abuela"</strong>. Esta configuración es inestable. Visualmente, en un nudo plano los cabos de entrada y salida de cada seminudo corren paralelos entre sí, mientras que en un nudo de abuela los cabos se cruzan en ángulo, creando una estructura asimétrica y abultada que tende a deslizarse.</p>
+                <h3>2.2. Técnica a Dos Manos (Paso a Paso)</h3>
+                <p>Este método es fundamental para el aprendizaje, pues permite un control táctil preciso de la tensión.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/Qyd_2Sphs2c" title="Nudo cuadrado con dos manos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="page-number left">7</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <ol>
+                    <li><strong>Posición Inicial:</strong> Sostenga un cabo de la sutura en cada mano.</li>
+                    <li><strong>Primera Lazada:</strong> Cruce el cabo de la mano derecha por encima del de la izquierda. Con el dedo índice izquierdo, cree un bucle y pase el cabo derecho a través. Jale horizontalmente.</li>
+                    <li><strong>Segunda Lazada (Opuesta):</strong> Cruce el cabo izquierdo sobre el derecho. Repita el movimiento opuesto con el índice derecho y pase el cabo izquierdo.</li>
+                    <li><strong>Lazadas Adicionales:</strong> Continúe alternando direcciones hasta 3-5 lazadas totales.</li>
+                </ol>
+                <div class="page-number right">8</div>
+            </div>
+        </div>
+
+        <!-- Spread 6: Pages 9-10 -->
+        <div id="spread-6" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h3>2.3. Técnica a Una Mano</h3>
+                 <p>Esta técnica es más rápida y útil cuando una mano está ocupada. Requiere más práctica.</p>
+                 <ol>
+                    <li><strong>Primera Lazada:</strong> Forme una "C" con los dedos índice y medio de la mano activa sobre el cabo activo. Atrape el cabo pasivo y páselo a través del bucle.</li>
+                    <li><strong>Segunda Lazada:</strong> Coloque el cabo activo por debajo de los dedos. Con un movimiento de extensión, forme un nuevo bucle y pase el cabo pasivo a través.</li>
+                 </ol>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/ELEUGRoLylA" title="Nudo cuadrado con una mano" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="page-number left">9</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h3>2.4. Aplicaciones Clínicas y Ventajas/Desventajas</h3>
+                <p><strong>Aplicaciones:</strong> Se utiliza de forma rutinaria en cierre de piel, incisiones abdominales, apendicectomías, cirugía de hernias, y anastomosis intestinales.</p>
+                <p><strong>Ventajas:</strong> Ofrece alta resistencia al deslizamiento (si se ejecuta correctamente), es de relativa simplicidad, hace un uso eficiente del material de sutura y proporciona buena retroalimentación táctil de la tensión.</p>
+                <p><strong>Desventajas:</strong> Su principal debilidad es el riesgo de deslizamiento si se ejecuta incorrectamente (formando un nudo de abuela). Su seguridad depende críticamente de la correcta ejecución.</p>
+                <div class="page-number right">10</div>
+            </div>
+        </div>
+
+        <!-- Spread 7: Pages 11-12 -->
+        <div id="spread-7" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 3: El Nudo de Cirujano</h2>
+                <h3>3.1. Descripción y Principio Fundamental</h3>
+                <p>El nudo de cirujano es una variante del nudo cuadrado con una <strong>doble vuelta en el primer seminudo</strong>. Los seminudos subsiguientes son simples y alternos.</p>
+                <p>El propósito de la doble lazada inicial es aumentar la fricción. Esto vuelve el primer seminudo "autoestático", menos propenso a aflojarse, lo cual es útil bajo tensión o con suturas con alta memoria.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/BJcUfKFPXZY" title="Nudo de cirujano" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="page-number left">11</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h3>3.2. Indicaciones Específicas</h3>
+                <ul>
+                    <li><strong>Tejidos bajo Tensión:</strong> La fricción de la primera lazada mantiene los bordes aproximados.</li>
+                    <li><strong>Materiales de Baja Fricción o Alta "Memoria":</strong> Ideal para monofilamentos (Nylon, Polipropileno, PDS).</li>
+                </ul>
+                <h3>3.3. Ventajas y Desventajas</h3>
+                <ul>
+                    <li><strong>Ventajas:</strong> Gran seguridad en la primera lazada, facilitando la técnica en tejidos tensos.</li>
+                    <li><strong>Desventajas:</strong> Es más voluminoso, consume más material y el ajuste puede ser más difícil.</li>
+                </ul>
+                <div class="page-number right">12</div>
+            </div>
+        </div>
+
+        <!-- Spread 8: Pages 13-14 -->
+        <div id="spread-8" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 4: Anudado en Profundidad</h2>
+                <h3>4.1. Principios del Anudado en Cavidades</h3>
+                <p>Un principio crítico es evitar la tensión excesiva hacia arriba (hacia el cirujano), ya que puede desgarrar el tejido. La tensión debe aplicarse de la forma más horizontal posible al eje de la herida. La técnica a una mano suele ser ventajosa. Una estrategia común es realizar las lazadas iniciales fuera de la cavidad y luego deslizar el nudo hasta su posición final con los dedos.</p>
+                <h3>4.2. Técnicas de Anudado Profundo Manual</h3>
+                <p>Exigen gran destreza. Se usa el dedo índice para guiar los hilos y asentar el nudo. Es crucial mantener tracción constante en un cabo para evitar que la primera lazada se afloje.</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/eOiMVubjnBs" title="Anudado en profundidad" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="page-number left">13</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 5: Análisis Comparativo</h2>
+                <h3 class="text-center">Nudo Cuadrado vs. Nudo de Cirujano</h3>
+                <table class="w-full text-left border-collapse my-4 text-xs font-sans">
+                    <thead class="bg-blue-800 text-white">
+                        <tr><th class="p-2 border">Característica</th><th class="p-2 border">Nudo Cuadrado</th><th class="p-2 border">Nudo de Cirujano</th></tr>
+                    </thead>
+                    <tbody class="bg-blue-50">
+                        <tr><td class="p-2 border font-bold">Seguridad 1ª Lazada</td><td class="p-2 border">Moderada; depende de la tensión.</td><td class="p-2 border">Alta a Muy Alta.</td></tr>
+                        <tr><td class="p-2 border font-bold">Manejo de Tensión</td><td class="p-2 border">Tensión leve a moderada.</td><td class="p-2 border">Alta tensión tisular.</td></tr>
+                        <tr><td class="p-2 border font-bold">Volumen del Nudo</td><td class="p-2 border">Mínimo.</td><td class="p-2 border">Mayor.</td></tr>
+                        <tr><td class="p-2 border font-bold">"Memoria" de Sutura</td><td class="p-2 border">Insuficiente para alta memoria.</td><td class="p-2 border">Preferido para alta memoria.</td></tr>
+                        <tr><td class="p-2 border font-bold">Facilidad de Ajuste</td><td class="p-2 border">Fácil de ajustar.</td><td class="p-2 border">Más difícil de ajustar.</td></tr>
+                        <tr><td class="p-2 border font-bold">Uso Primario</td><td class="p-2 border">General, piel, tensión moderada.</td><td class="p-2 border">Tejido tenso, monofilamento.</td></tr>
+                    </tbody>
+                </table>
+                <p class="text-sm">La evidencia sugiere que la superioridad mecánica depende del material y calibre. La elección final depende de la valoración de múltiples variables por parte del cirujano.</p>
+                <div class="page-number right">14</div>
+            </div>
+        </div>
+        
+        <!-- Spread 9: Pages 15-16 -->
+        <div id="spread-9" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 6: Mejores Prácticas</h2>
+                <h3>6.1. Selección Criteriosa del Material</h3>
+                <p>La elección del material impacta la seguridad y cicatrización.</p>
+                <ul>
+                    <li><strong>Monofilamento vs. Multifilamento:</strong> Monofilamentos (Nylon, PDS) son lisos pero sus nudos se deslizan más. Multifilamentos (Seda, Vicryl®) tienen mayor fricción y seguridad de nudo, pero su capilaridad puede albergar bacterias.</li>
+                    <li><strong>Absorbibles vs. No Absorbibles:</strong> La elección depende del tiempo de soporte que requiera el tejido.</li>
+                    <li><strong>Calibre:</strong> Usar el más fino posible que mantenga la aproximación.</li>
+                </ul>
+                <div class="page-number left">15</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Tabla Guía de Selección de Suturas</h2>
+                <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse my-4 text-xs">
+                    <thead class="bg-blue-800 text-white font-sans">
+                        <tr><th class="p-2 border">Tejido</th><th class="p-2 border">Tipo de Hilo</th><th class="p-2 border">Calibre</th><th class="p-2 border">Aguja</th></tr>
+                    </thead>
+                    <tbody class="bg-blue-50">
+                        <tr><td class="p-2 border font-semibold">Piel</td><td class="p-2 border">Nylon, Polipropileno</td><td class="p-2 border">3-0 a 6-0</td><td class="p-2 border">Cortante</td></tr>
+                        <tr><td class="p-2 border font-semibold">TCS</td><td class="p-2 border">Vicryl®, Ac. Poliglicólico</td><td class="p-2 border">3-0 a 5-0</td><td class="p-2 border">Redonda</td></tr>
+                        <tr><td class="p-2 border font-semibold">Fascia</td><td class="p-2 border">PDS, Polipropileno</td><td class="p-2 border">2-0 a 1</td><td class="p-2 border">Tapercut/Redonda</td></tr>
+                        <tr><td class="p-2 border font-semibold">Músculo</td><td class="p-2 border">Vicryl®, PDS</td><td class="p-2 border">2-0 a 0</td><td class="p-2 border">Redonda</td></tr>
+                        <tr><td class="p-2 border font-semibold">Vasos</td><td class="p-2 border">Seda, Polipropileno</td><td class="p-2 border">4-0 a 7-0</td><td class="p-2 border">Redonda</td></tr>
+                        <tr><td class="p-2 border font-semibold">TGI</td><td class="p-2 border">PDS, Vicryl®</td><td class="p-2 border">3-0 a 5-0</td><td class="p-2 border">Redonda</td></tr>
+                    </tbody>
+                </table>
+                </div>
+                <div class="page-number right">16</div>
+            </div>
+        </div>
+        
+        <!-- Spread 10: Pages 17-18 -->
+        <div id="spread-10" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">6.2. Minimizar el Trauma Tisular</h2>
+                <ul>
+                    <li><strong>Tensión Adecuada:</strong> Recordar "aproximar, no estrangular".</li>
+                    <li><strong>Manejo Gentil:</strong> Usar instrumentos, evitar dañar el hilo o "aserrar" tejidos.</li>
+                    <li><strong>Nudos Pequeños:</strong> Mínimo volumen y cabos cortos.</li>
+                    <li><strong>Colocación del Nudo:</strong> Lateral a la línea de incisión.</li>
+                    <li><strong>Eversión de Bordes en Piel:</strong> Evitarla, ya que contrarresta la contracción natural de la cicatriz.</li>
+                    <li><strong>Cierre por Capas:</strong> Reduce tensión y espacios muertos.</li>
+                </ul>
+                <div class="page-number left">17</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">6.3. Prevención y Simulación</h2>
+                <h3>Prevención de Complicaciones</h3>
+                <p><strong>Dehiscencia:</strong> Prevenida con técnica correcta, tensión adecuada y material apropiado.</p>
+                <p><strong>Infección (ISQ):</strong> Nudos pequeños y monofilamentos en heridas contaminadas reducen el riesgo.</p>
+                <p><strong>Granulomas:</strong> Evitar exceso de material o suturas de alta reactividad.</p>
+                <h3>La Importancia de la Simulación</h3>
+                <p>El dominio requiere práctica extensa, deliberada y continua. El uso de simuladores ha demostrado ser una herramienta de gran impacto para perfeccionar competencias.</p>
+                <div class="page-number right">18</div>
+            </div>
+        </div>
+        
+        <!-- Spread 11: Pages 19-20 (Final Content with all References) -->
+        <div id="spread-11" class="spread">
+            <div class="page page-left">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Sección 7: Conclusión</h2>
+                <p>La habilidad para realizar nudos de manera competente y segura es un pilar para la seguridad del paciente. No existe un "nudo único para todas las situaciones"; la elección debe ser razonada y adaptada.</p>
+                <ul>
+                    <li>El <strong>nudo cuadrado</strong> es el pilar para uso general, pero su fiabilidad depende de una ejecución correcta.</li>
+                    <li>El <strong>nudo de cirujano</strong> es fundamental para manejar alta tensión o suturas con memoria.</li>
+                </ul>
+                <p>Se recomienda a los residentes una práctica deliberada y continua. Cada nudo es un acto de responsabilidad; su correcta ejecución previene complicaciones, mientras que un nudo deficiente puede causarlas.</p>
+                <p class="text-xs italic mt-4">Nota: Este manual fue desarrollado con el apoyo de herramientas de inteligencia artificial para el diseño visual y la búsqueda inicial de información. Sin embargo, el filtrado, la selección de importancia, la síntesis y la estructuración final del contenido fueron realizados íntegramente por los autores para garantizar la precisión y relevancia clínica.</p>
+                <div class="page-number left">19</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-logos"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508546/Escudo-UNAM-escalable.svg_yvsrha.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749509572/unnamed_sqccov.png"><img src="https://res.cloudinary.com/du9jwdogj/image/upload/v1749508545/cesiq_logo_placeholder_vnh8jh.png"></div>
+                <h2 class="page-header">Referencias Bibliográficas</h2>
+                <ul class="references-list">
+                    <li>Practical review of factors affecting knot security in plastic surgery. Arch Plast Surg. 2023 Aug 25;50(4):333-343.</li>
+                    <li>Knot Tying: Two-handed Tie [Internet]. Seattle (WA): University of Washington Department of Surgery; [consultado 2025 Jun 2].</li>
+                    <li>Failure of a surgical knot may result in wound dehiscence or tissue repair rupture. JPRAS Open. 2023 Mar 1;35:63-73.</li>
+                    <li>Mastering Surgical Sutures: Techniques, Materials, and Best Practices [Internet]. MYCO Medical; 2025 May 20 [consultado 2025 Jun 2].</li>
+                    <li>Knot Tying I Module [Internet]. Detroit (MI): Wayne State University Department of Surgery; [consultado 2025 Jun 2].</li>
+                    <li>Wong YR, McGrouther DA. Biomechanics of surgical knot security: A systematic review. JPRAS Open. 2023 Mar 1;35:63-73.</li>
+                    <li>Knot Tying II Module [Internet]. Detroit (MI): Wayne State University Department of Surgery; [consultado 2025 Jun 2].</li>
+                    <li>Ten Broek RP, Stigall K, Jones K, et al. Surgical Sutures. [Actualizado 2023 May 29]. En: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2024 Jan-.</li>
+                    <li>Rubio Machuca JM, Neira Borja JE, Camino Benavides JE, et al. Abordajes y Técnicas Quirúrgicas Tomo 5. Cuevas Editores; 2024.</li>
+                    <li>Cornejo-Carrasco CE. Enseñanza virtual de las suturas quirúrgicas para estudiantes del pregrado de medicina humana durante la pandemia de covid-19. Rev Fac Med Hum. 2022 Jul 9;22(3):514-523.</li>
+                    <li>Balderston J, Richards S, Winder A, et al. Surgeon's knots versus flat square knots: which is better? Int Urogynecol J. 2014 Nov;25(11):1517-20.</li>
+                    <li>López L, López GJ. Principios en técnicas de suturas de piel: una guía para estudiantes. Univ. Méd. Pinareña. 2018;14(2):65-75.</li>
+                    <li>Tera H, Aberg C. Tensile strengths of twelve types of knots. Acta Chir Scand. 1976;142(1):1-7.</li>
+                    <li>Rodeheaver GT, Thacker JG, Edlich RF. Mechanical performance of polyglycolic acid and polyglactin 910 synthetic absorbable sutures. Surg Gynecol Obstet. 1981;153(6):835-41.</li>
+                </ul>
+                <div class="page-number right">20</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-button-container">
+        <button id="prevBtn" class="nav-button" title="Página Anterior" aria-label="Página Anterior">&#x276E;</button>
+        <button id="nextBtn" class="nav-button" title="Página Siguiente" aria-label="Página Siguiente">&#x276F;</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const spreads = Array.from(document.querySelectorAll('.spread'));
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentSpreadIndex = 0;
+
+            function updateNavButtons() {
+                prevBtn.disabled = currentSpreadIndex === 0;
+                nextBtn.disabled = currentSpreadIndex >= spreads.length - 1;
+            }
+
+            function showSpread(index) {
+                spreads.forEach((spread, i) => {
+                    spread.classList.toggle('active', i === index);
+                });
+                updateNavButtons();
+                // Hacer scroll al inicio del contenedor en cada cambio de página
+                const bookContainer = document.querySelector('.book-container');
+                if (bookContainer) {
+                    bookContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSpreadIndex < spreads.length - 1) {
+                    currentSpreadIndex++;
+                    showSpread(currentSpreadIndex);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSpreadIndex > 0) {
+                    currentSpreadIndex--;
+                    showSpread(currentSpreadIndex);
+                }
+            });
+            
+            // Carga inicial
+            showSpread(currentSpreadIndex);
+        });
+    </script>
+</body>
+</html>
